@@ -22,7 +22,8 @@ export const artGetListService = (params) =>
   
 // 文章：添加文章
 // 注意：data需要是一个formData格式的对象
-export const artPublishService = (data) => request.post('http://127.0.0.1:3007/my/article/add', data)
+export const artPublishService = (data) =>
+   request.post('http://127.0.0.1:3007/my/article/add', data)
 
 // 文章：获取文章详情
 export const artGetDetailService = (id) =>
