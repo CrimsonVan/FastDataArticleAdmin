@@ -2,9 +2,10 @@
   <div  style="display: flex;flex-direction: column;width: 100%;height: 90%;background-color:#ffffff;"> 
      <div style="display: flex;justify-content: space-between;align-items: center;height: 60px;background-color: #ffffff;border-bottom: 1px solid #f2efed;">
       <div style="margin-left: 16px;font-weight: bold;">文章分类</div>
-      <!-- <div style="margin-right: 16px;"><el-button type="primary" @click="addChannel">添加分类</el-button></div> -->
+
       <div style="margin-right: 16px;">
-        <channelEdit @success="getChannelList(1)"></channelEdit>
+
+        <el-button type="primary" @click="handleAdd">添加文章</el-button>
       </div>
 
      </div>
@@ -28,7 +29,7 @@
         <el-button
           size="small"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
+          @click="handleChange(scope.$index, scope.row)"
         >
           编辑
         </el-button>
@@ -38,7 +39,7 @@
         <el-empty description="没有数据"></el-empty>
       </template>
     </el-table>
-    <!-- 分页 -->
+
     
   
   <channelChange @success="change" ref="channelChangeOpen"></channelChange>
@@ -53,15 +54,12 @@
 <script  setup>
 import {  ref,onMounted } from 'vue'
 import{artGetChannelsService,artDelChannelService}from '../../api/articles.js'
-import channelEdit from './component/channelEdit.vue'
 import channelChange from './component/channelChange.vue'
 const loading=ref(false)
 const currentPage=ref(1)
 const channelChangeOpen=ref()
 const channelList=ref()
-
 const pageChange=(e)=>{
-// console.log('打印e',e);
 currentPage.value=e
 getChannelList(e)
 }
@@ -72,21 +70,11 @@ const getChannelList = async (e) => {
   loading.value = false
     
   }
-  
-  //  console.log('打印slice',res.data.data.slice(0,7));
-   
   let start=e*8-8
   let  end=e*8
-
   channelList.value=res.data.data.slice(start,end)//第e页
+  console.log('打印分类',channelList.value);
 
-
-
-
-
-  // console.log('打印channelList',channelList.value);
-  
-  // loading.value = false
 }
 const change=()=>{
       getChannelList(currentPage.value)
@@ -110,11 +98,12 @@ const handleEdit =async (index, row) => {
 
   getChannelList(currentPage.value)
 }
-const handleDelete = (index, row) => {
-  // console.log(index, row)
+const handleChange = (index, row) => {
   channelChangeOpen.value.open(row)
 }
-
+const handleAdd = () => {
+  channelChangeOpen.value.open()
+}
 
 </script>
 <style lang="scss">

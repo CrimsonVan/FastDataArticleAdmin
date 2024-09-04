@@ -1,14 +1,14 @@
 <template>
-    <!-- <div>你好</div> -->
   <el-container> 
+    <!-- 左侧导航栏 -->
        <el-aside width="180px" style="background-color: #232323;display: flex;align-items: center;flex-direction: column;">
-        <div class="option" style="margin-top: 30px;height: 80px;padding-left:25px" >
-            <img width="86%" src="https://mp-e0d15f0f-d6bf-4f95-b183-b82aede04535.cdn.bspapp.com/111/logo (3) - 副本.png" alt="">
+        <div class="option" style="margin-top: 30px;height: 80px;padding-left:5px" >
+            <img @click="goHomePage" width="100%" src="https://mp-e0d15f0f-d6bf-4f95-b183-b82aede04535.cdn.bspapp.com/111/logo (3) - 副本.png" alt="">
         </div> 
         
         <div class="option"  >
           <div class="text">
-<RouterLink active-class="active" :to="'/article/manage'">
+          <RouterLink active-class="active" :to="'/article/manage'">
         <el-icon >
         <Document />
       </el-icon>文章管理
@@ -94,14 +94,12 @@
   
   </template>
 <script setup>
-
-import { useRouter, useRoute } from 'vue-router'
-import { ArrowDown,Search,Avatar,User,Crop,EditPen,SwitchButton,CaretBottom,Document } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+import { Search,Avatar,User,EditPen,SwitchButton,CaretBottom,Document } from '@element-plus/icons-vue'
 import { useUserStore } from '../../stores';
-// import{ElMessageBox }from 'element-plus'
 const userStore=useUserStore()
 const router=useRouter()
-
+// 跳转页面函数
 const handleCommand = async (key) => {
   if (key === 'logout') {
     // 退出操作
@@ -124,38 +122,20 @@ const handleCommand = async (key) => {
     router.push(`/${key}/${key}`)
   }
 }
-const goArticleChannel=()=>{
-router.push({
-    path:'/article/channel'
-})
-}
-const goArticleManage=()=>{
-router.push({
-    path:'/article/manage'
-})
-}
-const goMyselfMyself=()=>{
-    router.push({
-    path:'/myself/myself'
-})}
-const goPassword=()=>{
-    router.push({
-    path:'/password/password'
-})
+const goHomePage=()=>{
+  router.push('/article/manage')
 }
 </script>
-<style lang="scss" scoped>
-    
-    .el-container{
-        
-        margin: 0;
-        height: 100%;
-        .el-header {
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .el-dropdown__box {
+<style lang="scss" scoped>  
+.el-container{        
+    margin: 0;
+    height: 100%;
+    .el-header{
+           background-color: #fff;
+           display: flex;
+           align-items: center;
+           justify-content: space-between;
+             .el-dropdown__box {
       display: flex;
       align-items: center;
       .el-icon {
@@ -167,20 +147,20 @@ const goPassword=()=>{
       &:focus {
         outline: none;
       }
-    }
-  }
-       .option{
-        // padding: 20px ;
-        display: flex;
-        align-items: center;
-        width: 80%;
-        height: 5%;
-        color: #ffffff;
-        margin-bottom: 20px;
+              }
+      }
+    .option{
+           cursor: pointer;
+           display: flex;
+           align-items: center;
+           width: 80%;
+           height: 5%;
+           color: #ffffff;
+           margin-bottom: 20px;
 
         .el-dropdown-link .el-icon--right{
             color: #ffffff;
-        }
+            }
         .text{
           padding-left: 20px;
           width: 100%;
@@ -195,12 +175,9 @@ const goPassword=()=>{
             .active {
                 color: #1296db;
             } 
-       }
-      
-      
-    }
-  
-  }
+            }
+         }
+}
 
 
 </style>

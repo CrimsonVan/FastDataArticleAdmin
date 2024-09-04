@@ -51,14 +51,8 @@
     </div>
   
   
-    <el-table v-loading="loading" width="83vw" row-height="20vh" :data="articleList" style="margin: 10px auto;">
-  <!--  
-        {id: 31743, title: '55555', 
-   pub_date: 'Tue Aug 13 2024 16:08:39 GMT+0800 (Coordinated Universal Time)', 
-     state: '已发布', cate_name: '影视'}
+    <el-table v-if="articleList" v-loading="loading" width="83vw" row-height="20vh" :data="articleList" style="margin: 10px auto;">
 
--->
-      <!-- <el-table-column  label="文章标题" width="200" type="index" /> -->
       <el-table-column label="标题" prop="title" width="150"/>
       <el-table-column label="主题" prop="cate_name" />
       <el-table-column label="发表时间" prop="pub_date">
@@ -104,24 +98,24 @@
       </div>
     </div>
     <article-edit ref="articleEditRef" @success="close" ></article-edit>
-    <article-change ref="articleChangeRef"  @success="close"></article-change>
+    <!-- <article-change ref="articleChangeRef"  @success="close"></article-change> -->
   </template>
   
   <script  setup>
   import {  ref,onMounted } from 'vue'
-  import{artGetChannelsService,artDelChannelService,artPublishService,artGetListService,artDelService}from '../../api/articles.js'
+  import{artGetChannelsService,artGetListService,artDelService}from '../../api/articles.js'
   import articleEdit from './component/articleEdit.vue'
   import channelChange from './component/channelChange.vue'
-  import articleChange from './component/articleChange.vue'
+  // import articleChange from './component/articleChange.vue'
 
-  import {Plus}from '@element-plus/icons-vue'
+  // import {Plus}from '@element-plus/icons-vue'
   import { useUserStore } from '../../stores'
-  import { dayjs } from 'element-plus'
+  import { dayjs, ElMessage } from 'element-plus'
 
  const formatTime = (time) => dayjs(time).format('YYYY年MM月DD日')
   const useStore=useUserStore()
   const articleEditRef=ref()
-  const articleChangeRef=ref()
+  // const articleChangeRef=ref()
   const loading=ref(false)
   const currentPage=ref(1)
   const channelChangeOpen=ref()
@@ -129,7 +123,7 @@
 //查询搜索文章参数
   const params=ref({
   pagenum:1,
-  pagesize:7,
+  pagesize:6,
   cate_id:'',
   state:''})
 const addArticle=()=>{
@@ -169,8 +163,9 @@ const changeCate=(e)=>{
 
 }
 const searchArticle=async()=>{
-  if(!params.value.state && !params.value.cate_id){
-    ElMessage.success("查询参数不能为空")
+  // ElMessage.success('测试提示')
+  if(params.value.state==='' || !params.value.cate_id===''){
+    ElMessage.success("两个查询参数不能为空")
        return
   }
 // console.log('打印搜索索引',searchList.value);
@@ -188,12 +183,17 @@ const articleList=ref([])
 const getArticleList=async()=>{
   let {pagenum,pagesize,state,cate_id}=params.value
   loading.value = true
-    let  res=await artGetListService({pagenum,pagesize,cate_id,state})
+         await getChannelList(1)
+    
+    let  res=await artGetListService({pagenum,pagesize,state,cate_id})
+ //匹配cate_id所对应文章分类   
+   res.data.data.forEach(item=>{
+  
+  let cateObj=channelList?.value.find(i=>i.id==item.cate_id)
+  item.cate_name=cateObj.cate_name
+})
     loading.value = false
     articleList.value=res.data.data
-
-
-   
 }
 
 const close=()=>{
@@ -221,7 +221,7 @@ const close=()=>{
     // let start=e*8-8
     // let  end=e*8
   
-    channelList.value=res.data.data
+   channelList.value=res.data.data
   
   
   
@@ -236,7 +236,7 @@ const close=()=>{
   }
   const search = ref('')
   onMounted(()=>{
-    getChannelList(1)
+      // getChannelList(1)
     getArticleList()
   })
   
@@ -250,6 +250,7 @@ const close=()=>{
    
     return
   }
+      console.log('打印id',row.id);
 
     await artDelService(row.id)
     params.value.pagenum=currentPage.value
@@ -261,7 +262,8 @@ const close=()=>{
   const handleDelete = (index, row) => {
     // console.log('打印编辑',index, row)
     // channelChangeOpen.value.open(row)
-    articleChangeRef.value.open(row)
+    // articleChangeRef.value.open(row)
+    articleEditRef.value.open(row)
 
   }
 

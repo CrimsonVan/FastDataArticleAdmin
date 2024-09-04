@@ -58,8 +58,8 @@
  try{
   let res=await userUpdatePasswordService({
         
-    old_pwd:userInfo.value.oldpass ,
-    new_pwd:userInfo.value.newpass,
+    oldPwd:userInfo.value.oldpass ,
+    newPwd:userInfo.value.newpass,
     re_pwd: userInfo.value.reconfirmpass,
     })
 

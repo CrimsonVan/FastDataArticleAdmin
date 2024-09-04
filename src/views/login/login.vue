@@ -70,13 +70,18 @@ const userStore = useUserStore()
 const router = useRouter()
 const login = async () => {
   await form.value.validate()
-  const res = await userLoginService(formModel.value)
+  try{
+const res = await userLoginService(formModel.value)
+   userStore.getUser()
   userStore.setToken(res.data.token)
-  // console.log('打印登录res',res.data);
-  
-//   ElMessage.success('登录成功')
   router.push('/')
-  userStore.getUser()
+  }catch(err){
+    console.log('打印err',err);
+    
+    return
+  }
+  
+ 
 }
 
 // 切换的时候，重置表单内容

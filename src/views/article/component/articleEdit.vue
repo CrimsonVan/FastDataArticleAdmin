@@ -10,7 +10,7 @@ import {
   artEditService,
   artGetChannelsService
 } from '../../../api/articles'
-import { baseURL } from '../../../utils/request'
+// import { baseURL } from '../../../utils/request'
 import axios from 'axios'
 const valueS=ref('')
 const cateList=ref([])
@@ -46,7 +46,11 @@ const formModel = ref({ ...defaultForm })
 // 图片上传相关逻辑
 const imgUrl = ref('')
 const onSelectFile = (uploadFile) => {
+  console.log('打印uploadFile',uploadFile.raw);
+  
   imgUrl.value = URL.createObjectURL(uploadFile.raw) // 预览图片
+  console.log('打印预览图片',imgUrl.value);
+
   // 立刻将图片对象，存入 formModel.value.cover_img 将来用于提交
   formModel.value.cover_img = uploadFile.raw
 }
@@ -55,7 +59,10 @@ const onSelectFile = (uploadFile) => {
 const emit = defineEmits(['success'])
 const onPublish = async (state) => {
   // 将已发布还是草稿状态，存入 formModel
+  // return console.log('测试发布按钮');
+  
   formModel.value.state = state
+ console.log('打印转化为formData前',formModel.value);
 
   // 注意：当前接口，需要的是 formData 对象
   // 将普通对象 => 转换成 => formData对象
@@ -74,10 +81,10 @@ const onPublish = async (state) => {
   } else {
     // 添加操作
     
-    console.log('打印添加文章参数',fd);
+  //  return console.log('打印添加文章参数',fd);
     
     await artPublishService(fd)
-    // ElMessage.success('添加成功')
+    ElMessage.success('添加成功')
     visibleDrawer.value = false
     // 通知到父组件，添加成功了
     emit('success')
@@ -91,13 +98,17 @@ const onPublish = async (state) => {
 const editorRef = ref()
 const open = async (row) => {
   visibleDrawer.value = true // 显示抽屉
+  //  console.log('打印详情页row',row);
 
   if (row.id) {
     // 需要基于 row.id 发送请求，获取编辑对应的详情数据，进行回显
     const res = await artGetDetailService(row.id)
+    // return console.log('打印详情页row',row);
+    res.data.data.cate_name=row.cate_name
+    
     formModel.value = res.data.data
     // 图片需要单独处理回显
-    imgUrl.value = baseURL + formModel.value.cover_img
+    imgUrl.value = 'http://127.0.0.1:3007' + formModel.value.cover_img
     // 注意：提交给后台，需要的数据格式，是file对象格式
     // 需要将网络图片地址 => 转换成 file对象，存储起来, 将来便于提交
     const file = await imageUrlToFileObject(
@@ -105,6 +116,8 @@ const open = async (row) => {
       formModel.value.cover_img
     )
     formModel.value.cover_img = file
+    // console.log('打印上传图片后的formModel',formModel.value);
+    
   } else {
     formModel.value = { ...defaultForm } // 基于默认的数据，重置form数据
     // 这里重置了表单的数据，但是图片上传img地址，富文本编辑器内容 => 需要手动重置

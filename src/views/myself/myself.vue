@@ -55,10 +55,7 @@
 <script  setup>
 import {  ref,onMounted } from 'vue'
 import {useUserStore}from'../../stores/index'
-// import { Plus } from '@element-plus/icons-vue';
 import { userUpdateInfoService,userUpdateAvatarService } from '../../api/user';
-// import { ElMessageBox } from 'element-plus';
-// 是在使用仓库中数据的初始值 (无需响应式) 解构无问题
 const {
   user: { email, id, nickname, username },
   getUser
@@ -79,21 +76,17 @@ userInfo.value.email=''
 
 }
 const onSelectFile = async(uploadFile) => {
-  // 基于 FileReader 读取图片做预览
-  // console.log('打印upload图片',uploadFile);
-  
   const reader = new FileReader()
   reader.readAsDataURL(uploadFile.raw)
   reader.onload =async () => {
-  
   userStore.user.user_pic=reader.result
+  console.log('打印base64',reader.result);
   let res1=await userUpdateAvatarService(reader.result)
-ElMessage.success(res1.data.message || '修改成功')
-        // await getUser()
+  ElMessage.success(res1.data.message || '修改成功')
+  await getUser()
   }
 }
 const submitForm=async()=>{
-// console.log('打印ruleFormRef',userInfo.value);
 try{
   let res=await userUpdateInfoService(
   {
@@ -102,7 +95,10 @@ try{
     email: userInfo.value.email
 }
 )
+await getUser()
+
 ElMessage.success(res.data.message || '修改成功')
+
 }catch{
 // console.log(error);
 
@@ -111,13 +107,15 @@ return
 
 // console.log('打印api头像',res);
 
-await getUser()
+
 
 // console.log('打印picurl',`${userInfo.value.user_pic}`);
 
 
 }
-
+onMounted(()=>{
+   getUser()
+})
 </script>
 <style lang="scss">
 
